@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phonics Practice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+        h1 {
+            color: #333;
+        }
+        .logo {
+            width: 100px;
+            margin-top: 20px;
+        }
+        .options {
+            margin: 20px;
+        }
+        .option {
+            padding: 10px;
+            font-size: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .option:hover {
+            background-color: #0056b3;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .more-lessons-btn {
+            margin-top: 40px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .more-lessons-btn:hover {
+            background-color: #218838;
+        }
+        .instructions {
+            font-size: 16px;
+            margin: 20px;
+            color: #555;
+        }
+        .play-btn {
+            padding: 10px;
+            background-color: #ffc107;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            margin: 10px;
+        }
+        .play-btn:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Logo -->
+<img src="https://i.imgur.com/mwpTHJj.png" class="logo" alt="Logo">
+
+<h1>Phonics Practice</h1>
+
+<!-- Instructions -->
+<div class="instructions">
+    <p>Listen to the sound and choose the correct letter combination that makes the sound.</p>
+    <button class="play-btn" id="playButton">Play Sound</button>
+</div>
+
+<!-- Options -->
+<div class="options" id="optionsContainer"></div>
+
+<!-- Feedback message -->
+<div class="feedback" id="feedbackMessage"></div>
+
+<!-- "More Lessons" button -->
+<a href="https://sites.google.com/view/grades-1/home" class="more-lessons-btn">More Lessons</a>
+
+<!-- JavaScript -->
+<script>
+    const sounds = [
+        { sound: "sh", options: ["sh", "ch", "th"] },
+        { sound: "th", options: ["th", "sh", "wh"] },
+        { sound: "ch", options: ["ch", "ph", "gh"] },
+        { sound: "ar", options: ["ar", "or", "er"] },
+        { sound: "ai", options: ["ai", "ei", "ou"] },
+        { sound: "ee", options: ["ee", "ea", "ie"] },
+        { sound: "oo", options: ["oo", "ow", "ou"] },
+        { sound: "ow", options: ["ow", "au", "aw"] },
+        { sound: "or", options: ["or", "ur", "er"] },
+        { sound: "au", options: ["au", "aw", "or"] },
+    ];
+
+    let currentSoundIndex = 0;
+
+    // Function to setup a new phonics exercise
+    function setupExercise() {
+        feedbackMessage.innerText = '';
+        const currentSound = sounds[currentSoundIndex];
+
+        // Clear previous options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+
+        // Generate options
+        currentSound.options.sort(() => Math.random() - 0.5); // Shuffle options
+        currentSound.options.forEach(option => {
+            const button = document.createElement('button');
+            button.innerText = option;
+            button.className = 'option';
+            button.onclick = () => checkAnswer(option);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    // Function to play the sound using speech synthesis
+    function playSound() {
+        const currentSound = sounds[currentSoundIndex].sound;
+        const utterance = new SpeechSynthesisUtterance(currentSound);
+        speechSynthesis.speak(utterance);
+    }
+
+    // Function to check the user's answer
+    function checkAnswer(selectedOption) {
+        const currentSound = sounds[currentSoundIndex];
+
+        if (selectedOption === currentSound.sound) {
+            feedbackMessage.innerText = "Correct! Well done.";
+            feedbackMessage.style.color = "green";
+            currentSoundIndex++; // Move to the next sound
+            setTimeout(() => {
+                if (currentSoundIndex < sounds.length) {
+                    setupExercise();
+                } else {
+                    feedbackMessage.innerText = "Congratulations! You've completed all the sounds.";
+                }
+            }, 2000); // Setup the next exercise after 2 seconds
+        } else {
+            feedbackMessage.innerText = "Incorrect! Try again.";
+            feedbackMessage.style.color = "red";
+        }
+    }
+
+    // Start the exercise
+    document.getElementById('playButton').onclick = playSound;
+    setupExercise();
+</script>
+
+</body>
+</html>
